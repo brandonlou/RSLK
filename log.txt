@@ -1,0 +1,17 @@
+5/25/2020
+
+0 | Min: 617 | Max: 2500
+1 | Min: 548 | Max: 2500
+2 | Min: 594 | Max: 2500
+3 | Min: 558 | Max: 2488
+4 | Min: 571 | Max: 2381
+5 | Min: 604 | Max: 2500
+6 | Min: 698 | Max: 2500
+7 | Min: 663 | Max: 2500
+
+kP: 0.0008
+kD: 0.0005
+
+This kP value had a slight oscillation over a long-ish period. The kD value helped to dampen it out. Higher kD values caused even more oscillation.
+
+Spin time: 140000

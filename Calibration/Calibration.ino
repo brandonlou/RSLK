@@ -7,7 +7,7 @@
 const uint8_t  NUM_IRS = 8;
 const uint16_t BAUD_RATE = 9600;
 const uint16_t MAX_NORMALIZED_VALUE = 1000;
-const uint8_t  PRINT_PRECISION = 6;
+const uint8_t  PRINT_PRECISION = 8;
 
 uint16_t IR_Values[NUM_IRS];
 uint16_t maxValues[NUM_IRS] = {0, 0, 0, 0, 0, 0, 0, 0};

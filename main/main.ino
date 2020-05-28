@@ -57,10 +57,17 @@ void loop() {
       detectBarTime = millis();
     }
 
-    // If on ribbon track, the third crossbar detected is the last one so do a 180 and reset number of crossbars seen.
-    if(numBars >= (currentMode == STRAIGHT)? 1 : 3) {
+    // Do a 180 depending on the track and number of crossbars seen.
+    if((currentMode == STRAIGHT && numBars == STRAIGHT_BARS) || (currentMode == RIBBON && numBars == RIBBON_BARS)) {
       donut();
-      numBars = 0;
+    }
+
+    // If on ribbon track and back at start/finish line, stop moving.
+    if(currentMode == RIBBON && numBars >= RIBBON_BARS * 2) {
+      while(true) {
+        analogWrite(LEFT_PWM,  0);
+        analogWrite(RIGHT_PWM, 0);
+      }
     }
 
   // Not under a crossbar.

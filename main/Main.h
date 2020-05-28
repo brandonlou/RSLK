@@ -5,7 +5,7 @@
 enum mode {STRAIGHT, RIBBON};
 
 // Stores the current mode. Change depending on which track the RSLK will be run on.
-const mode currentMode = STRAIGHT;
+const mode currentMode = RIBBON;
 
 // PIN constants.
 const uint8_t LEFT_NSLP  = 31,

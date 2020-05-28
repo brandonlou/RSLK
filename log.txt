@@ -15,3 +15,10 @@ kD: 0.0005
 This kP value had a slight oscillation over a long-ish period. The kD value helped to dampen it out. Higher kD values caused even more oscillation.
 
 Spin time: 140000
+
+5/27/2020
+kP = 0.006,
+kI = 0.00000000001,
+kD = 0.00055;
+
+Increasing kP by a lot helped the RSLK match the curves of the ribbon track. The integral term smoothed it out just a tiny bit. Increasing kI would increase the jitteyness.

@@ -13,26 +13,29 @@ const uint8_t LEFT_NSLP  = 31,
               RIGHT_PWM  = 39;
 
 // PID constants.
-const double kP = 0.0008,
-             kI = 0.0,
-             kD = 0.0005;
+const double kP = 0.006,
+             kI = 0.00000000001,
+             kD = 0.00055;
 
 // Number of IR sensors on the RSLK.
 const uint8_t NUM_IRS = 8;
 
 // Offset values are used to set the calibrated white value of every sensor to 0.
-const uint16_t IR_OFFSET[NUM_IRS] = {589, 528, 566, 529, 541, 551, 621, 597};
+const uint16_t IR_OFFSET[NUM_IRS] = {394, 326, 371, 349, 361, 349, 417, 385};
 
 // Scaling values scale each sensor's raw input to a value between 0 and 1000.
-const double IR_SCALE[NUM_IRS] = {0.523286, 0.507099, 0.517063, 0.523560, 0.539957, 0.513084, 0.532198, 0.525486};
+const double IR_SCALE[NUM_IRS] = {0.474834, 0.459982, 0.469704, 0.552181, 0.514139, 0.464900, 0.480077, 0.472813};
+
 // Give different weights depending on how far the sensor is from the center.
 const short IR_WEIGHT[NUM_IRS] = {-8, -4, -2, -1, 1, 2, 4, 8};
 
 // Analog base speed of the RSLK before PID corrections.
-const uint8_t BASE_SPEED = 50;
+const uint8_t BASE_SPEED = 40;
 
 // Below the deadband range, wheels will not spin due to static friction.
 const uint8_t DEADBAND = 11;
+
+const uint16_t BAR_THRESHOLD = 6000;
 
 // Stores the raw IR readings from each sensor. 0 --> 7; right --> left.
 uint16_t IR_Values[NUM_IRS];
@@ -57,6 +60,10 @@ PID PIDController(&fusedInput, &output, &targetValue, kP, kI, kD, DIRECT);
 // Stores which side of the track the RSLK is on.
 enum side currentSide;
 
+unsigned long detectBarTime = 0;
+
+uint8_t numBars = 0;
+
 size_t i;
 
 
@@ -78,7 +85,7 @@ void setup() {
   PIDController.SetMode(AUTOMATIC);
   PIDController.SetOutputLimits(-BASE_SPEED, BASE_SPEED);
 
-//  Serial.begin(9600);
+  Serial.begin(9600);
 
   delay(5000); // Wait 5 seconds before starting.
 
@@ -106,9 +113,22 @@ void loop() {
   // Keep track of which side of the track the car is on.
   currentSide = (fusedInput < 0) ? LEFT : RIGHT;
 
-  if(summedInput >= 7000) {
-    donut();
+  // On top of a bar.
+  if(summedInput >= BAR_THRESHOLD) {    
     
+    if(millis() - detectBarTime >= 750) {
+      numBars++;
+      detectBarTime = millis();
+    }
+
+    Serial.println(numBars); 
+
+    if(numBars >= 3) {
+      donut();
+      numBars = 0;
+    }
+
+  // Not under a bar.
   } else {
     goStraight();
   }
@@ -142,15 +162,12 @@ void donut() {
   digitalWrite(RIGHT_DIR, HIGH);
 
   // Spin!!! (ideally, would use encoders)
-  for(i = 0; i < 140000; i++) {
+  for(i = 0; i < 180000; i++) {
     analogWrite(LEFT_PWM, 40);
     analogWrite(RIGHT_PWM, 40);
   }
 
-  analogWrite(LEFT_PWM, 0);
-  analogWrite(RIGHT_PWM, 0);
-
   // Re-reverse right wheel.
   digitalWrite(RIGHT_DIR, LOW);
-  
+    
 }
